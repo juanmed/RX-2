@@ -76,7 +76,7 @@ gauge = init_serial('/dev/ttyUSB0', 38400)
 #print(gauge.write('RDF1R1\r'))
 
 # read data
-bytes = 10
+bytes = 100
 data = list()
 
 request = True                  # flag to request data
@@ -96,7 +96,7 @@ while len(data) < bytes:
         request = True
 
 
-    
+print(data)    
 data = [float(re.findall(r"[-+]?\d*\.\d+|\d+", value)[0]) for value in data]
 #print (data)
 #data = [float(value) for value in data]
