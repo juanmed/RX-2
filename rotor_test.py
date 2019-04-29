@@ -146,7 +146,7 @@ init_rpi()
 # pwm params
 freq = 50					# PWM frequency
 dt_min = 5					# minimum duty cycle
-dt_max = 8					# maximum duty cycle
+dt_max = 10					# maximum duty cycle
 dt_step = 0.1
 
 # Configure pwm
