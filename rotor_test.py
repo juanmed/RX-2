@@ -15,6 +15,7 @@ import RPi.GPIO as GPIO
 import matplotlib
 import re
 import time
+import csv
 
 import matplotlib.pyplot as plt
 
@@ -112,6 +113,7 @@ def get_data(dt_range, n, pwm_channel):
 			if request:
 				gauge.write('RDF0\r')
 				request = False
+				time.sleep(0.1)
 
 			# check if data is available
 			if(gauge.inWaiting()):
@@ -126,7 +128,7 @@ def get_data(dt_range, n, pwm_channel):
 		mean = np.mean(data)
 		std = np.std(data, ddof = 1)
 
-		point = (mean,std, dt)
+		point = [mean,std, dt]
 		point_list.append(point)
 	
 	return point_list
@@ -144,7 +146,8 @@ init_rpi()
 # pwm params
 freq = 50					# PWM frequency
 dt_min = 5					# minimum duty cycle
-dt_max = 10					# maximum duty cycle
+dt_max = 8					# maximum duty cycle
+dt_step = 0.1
 
 # Configure pwm
 GPIO.setup(35, GPIO.OUT) 	# configure pin 12 as output for pwm
@@ -156,9 +159,17 @@ a = raw_input('>> Press "S" to start sampling, press "C" to Cancel: ')
 if (a == "S"):
 
 	print(">> Sampling will start...")
-	dt_range = np.arange(dt_min, dt_max, 0.5)		# make duty cycle sweep range
+	print(" *******  WARNING ********\n" + 
+	      " If a rotor will spin,\n"+ 
+	      " make sure you are at a \n" + 
+ 	      " safe distance! \n"+
+	      " *******  WARNING ********\n")
+	raw_input("Test will start 5 seconds after you press any key...")
+	time.sleep(5)
+	print('>> Test start...')
+	dt_range = np.arange(dt_min, dt_max, dt_step)		# make duty cycle sweep range
 	data = get_data(dt_range, n, p1)
-	print(">> Sampling Finished. Bye!")
+	print(">> Sampling Finished.")
 
 	# recover mean, std
 	force_vals = [point[0] for point in data]
@@ -175,7 +186,7 @@ if (a == "S"):
 	ax0.set_ylabel('Force {N}')
 	ax0.set_xlabel('n')
 
-	plt.show()
+
 	
 elif(a == "C"):
 	print(">> Sampling canceled. Bye!")
@@ -184,9 +195,26 @@ else:
 
 
 p1.stop()					# stop pwm
+print(">> PWM Signal stoped.")
 GPIO.cleanup()
+print(">> RPi resources freed.")
 gauge.close()
+print(">> Serial port closed.")
 
+
+# Plot after all signals are off
+plt.show()
+
+
+filename = raw_input(">> Enter file name to save data: ")
+
+# save data in csv file
+with open(filename, 'a') as csvfile:
+	writer = csv.writer(csvfile)
+	writer.writerows(data)
+
+csvfile.close()
+print(">> File {} saved.Bye!".format(filename))
 
 
 	
