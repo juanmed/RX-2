@@ -8,7 +8,7 @@ import numpy
 import time
 import re
 
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def init_serial(port, baudrate):
     # configure the serial connections (the parameters differs on the device you are connecting to)
@@ -76,7 +76,7 @@ gauge = init_serial('/dev/ttyUSB0', 38400)
 #print(gauge.write('RDF1R1\r'))
 
 # read data
-bytes = 1000
+bytes = 10
 data = list()
 
 request = True                  # flag to request data
@@ -98,9 +98,10 @@ while len(data) < bytes:
 
     
 data = [float(re.findall(r"[-+]?\d*\.\d+|\d+", value)[0]) for value in data]
-#print (data)
+print (data)
 #data = [float(value) for value in data]
 
+"""
 fig0 = plt.figure(figsize=(20,10))
 ax0 = fig0.add_subplot(111)
 ax0.plot(data, color = 'r', linestyle = '-', label = 'Force {N}')
@@ -110,5 +111,7 @@ ax0.set_ylabel('Force {N}')
 ax0.set_xlabel('n')
 
 plt.show()
+"""
 
+# close serial connection to gauge
 gauge.close()
