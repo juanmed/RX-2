@@ -146,14 +146,14 @@ init_rpi()
 # pwm params
 freq = 50					# PWM frequency
 dt_min = 5					# minimum duty cycle
-dt_max = 10					# maximum duty cycle
+dt_max = 8.5					# maximum duty cycle
 dt_step = 0.1
 
 # Configure pwm
 GPIO.setup(35, GPIO.OUT) 	# configure pin 12 as output for pwm
 p1 = GPIO.PWM(35,freq)		# Pin 35, 
 
-n = 50						# read 100 force values per duty cycle value
+n = 20						# read 100 force values per duty cycle value
 
 a = raw_input('>> Press "S" to start sampling, press "C" to Cancel: ')
 if (a == "S"):
@@ -205,16 +205,30 @@ print(">> Serial port closed.")
 # Plot after all signals are off
 plt.show()
 
+saved = False
+while not saved:
+	filename = raw_input(">> Enter file name with '.csv' extension to save data (enter 'c' to skip): ")
 
-filename = raw_input(">> Enter file name to save data: ")
+	if(filename == 'c'):
+		print('>> Data not saved. Bye!')
+		saved = True
+	else:
+		try:
+			# save data in csv file
+			with open(filename, 'a') as csvfile:
+				writer = csv.writer(csvfile)
+				writer.writerows(data)
 
-# save data in csv file
-with open(filename, 'a') as csvfile:
-	writer = csv.writer(csvfile)
-	writer.writerows(data)
+			csvfile.close()
 
-csvfile.close()
-print(">> File {} saved.Bye!".format(filename))
+			# save image 
+			img_filename = filename.replace('csv','png')
+			fig0.savefig(img_filename)
+			print(">> File {} and image {} saved.Bye!".format(filename, img_filename))
+			saved = True
+		except:
+			print(">> ERROR WHILE SAVING! Please change file name.")
+	
 
 
 	
