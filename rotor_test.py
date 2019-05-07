@@ -153,7 +153,7 @@ dt_step = 0.1
 GPIO.setup(35, GPIO.OUT) 	# configure pin 12 as output for pwm
 p1 = GPIO.PWM(35,freq)		# Pin 35, 
 
-n = 20						# read 100 force values per duty cycle value
+n = 20						# read 'n' force values per duty cycle value
 
 a = raw_input('>> Press "S" to start sampling, press "C" to Cancel: ')
 if (a == "S"):
@@ -181,7 +181,7 @@ if (a == "S"):
 	ax0 = fig0.add_subplot(111)
 	ax0.plot(dt, force_vals, color = 'r', linestyle = '-', label = 'Force (mean) {N}')
 	ax0.plot(dt, force_std, color = 'g', linestyle = '-', label = 'Force (std) {N}')
-	ax0.legend(loc='upper right', shadow=True, fontsize='medium')
+	ax0.legend(loc='upper left', shadow=True, fontsize='medium')
 	ax0.set_title('Force Reading using AIKOH RX-2')
 	ax0.set_ylabel('Force {N}')
 	ax0.set_xlabel('n')
